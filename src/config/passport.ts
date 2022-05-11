@@ -5,6 +5,8 @@ import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
 
+dotenv.config();
+
 const notAuthorizedJson = { status: 401, message: "Não autorizado" };
 
 const options = {
@@ -14,7 +16,7 @@ const options = {
 
 passport.use(
   new JWTStrategy(options, async (payload, done) => {
-    const user = await User.findById(payload.id);
+    const user = await User.findOne({ email: payload.email });
     if (user) {
       return done(null, user);
     } else {

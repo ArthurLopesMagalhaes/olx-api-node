@@ -1,9 +1,9 @@
-import { Schema, Model, model, connection } from "mongoose";
+import { Schema, Model, model, connection, ObjectId } from "mongoose";
 
-type AdType = {
+export type AdType = {
   idUser: string;
   state: string;
-  category: string;
+  category: string | undefined;
   images: string[];
   dateCreated: Date;
   title: string;

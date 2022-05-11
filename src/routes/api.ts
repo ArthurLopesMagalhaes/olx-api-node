@@ -2,6 +2,7 @@ import { Request, Response, Router } from "express";
 
 import { privateRoute } from "../config/passport";
 import * as AuthValidator from "../validators/AuthValidator";
+import * as UserValidator from "../validators/UserValidator";
 
 import * as AuthController from "../controllers/authController";
 import * as AdsController from "../controllers/adsController";
@@ -15,9 +16,14 @@ router.get("/ping", (req: Request, res: Response) => {
 
 router.get("/states", UserController.getStates);
 router.get("/user/me", privateRoute, UserController.info);
-router.put("/user/me", privateRoute, UserController.editAction);
+router.put(
+  "/user/me",
+  UserValidator.editAction,
+  privateRoute,
+  UserController.editAction
+);
 
-router.post("/user/signin", AuthController.signIn);
+router.post("/user/signin", AuthValidator.signIn, AuthController.signIn);
 router.post("/user/signup", AuthValidator.signUp, AuthController.signUp);
 
 router.get("/categories", AdsController.getCategories);

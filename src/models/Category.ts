@@ -7,7 +7,7 @@ type CategoryType = {
 
 const schema = new Schema<CategoryType>({
   name: { type: String, required: true },
-  slug: { type: String },
+  slug: { type: String, required: true },
 });
 
 const modelName = "Category";
