@@ -1,5 +1,7 @@
 import { Request, Response, Router } from "express";
 
+import multer from "multer";
+
 import { privateRoute } from "../config/passport";
 import * as AuthValidator from "../validators/AuthValidator";
 import * as UserValidator from "../validators/UserValidator";
@@ -27,7 +29,12 @@ router.post("/user/signin", AuthValidator.signIn, AuthController.signIn);
 router.post("/user/signup", AuthValidator.signUp, AuthController.signUp);
 
 router.get("/categories", AdsController.getCategories);
-router.post("/ad/add", privateRoute, AdsController.addAction);
+router.post(
+  "/ad/add",
+  privateRoute,
+  AdsController.upload.array("images", 10),
+  AdsController.addAction
+);
 router.get("/ad/list", AdsController.getList);
 router.get("/ad/item", AdsController.getItem);
 router.post("/ad/:id", privateRoute, AdsController.editAction);

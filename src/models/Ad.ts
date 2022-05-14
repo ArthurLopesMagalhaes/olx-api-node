@@ -4,14 +4,14 @@ export type AdType = {
   idUser: string;
   state: string;
   category: string | undefined;
-  images: string[];
+  images: [string];
   dateCreated: Date;
   title: string;
   price: number;
   priceNegotiable: boolean;
   description: string;
   views: number;
-  status: string;
+  status: boolean;
 };
 
 const schema = new Schema<AdType>({
@@ -25,7 +25,7 @@ const schema = new Schema<AdType>({
   priceNegotiable: { type: Boolean, required: true },
   description: { type: String, required: true },
   views: { type: Number, required: true },
-  status: { type: String, required: true },
+  status: { type: Boolean, required: true },
 });
 
 const modelName = "Ad";

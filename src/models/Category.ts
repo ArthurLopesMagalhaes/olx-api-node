@@ -1,9 +1,10 @@
-import { Schema, Model, model, connection } from "mongoose";
+import { Schema, Model, model, connection, Document } from "mongoose";
 
-type CategoryType = {
+export interface CategoryType extends Document {
   name: string;
   slug: string;
-};
+  _doc?: any;
+}
 
 const schema = new Schema<CategoryType>({
   name: { type: String, required: true },
