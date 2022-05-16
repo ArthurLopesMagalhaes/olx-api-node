@@ -51,7 +51,6 @@ export const addAction = async (req: Request, res: Response) => {
     const priceNegotiable: boolean = req.body.pricenegotiable;
     const description: string = req.body.description;
     const category: string = req.body.category;
-    const image = req.file as File | undefined;
 
     console.log(req.files);
 
@@ -92,11 +91,44 @@ export const addAction = async (req: Request, res: Response) => {
 };
 
 //_______________________
-export const getList = (req: Request, res: Response) => {
-  res.json({ pong: true });
+export const getList = async (req: Request, res: Response) => {
+  const sort = req.query.sort as string;
+  const offset = Number(req.query.offset);
+  const limit = Number(req.query.limit);
+  const querySearch = req.query.querysearch as string;
+  const category = req.query.category as string;
+  const state = req.query.state as string;
+
+  try {
+    const adList = await adsService.listAds(
+      sort,
+      offset,
+      limit,
+      querySearch,
+      category,
+      state
+    );
+
+    return res.json({ adList });
+  } catch (error) {
+    return { error };
+  }
 };
-export const getItem = (req: Request, res: Response) => {
-  res.json({ pong: true });
+
+export const getItem = async (req: Request, res: Response) => {
+  const id = req.query.id as string;
+  const other = Boolean(req.query.other);
+
+  try {
+    const Item = await adsService.getItem(id, other);
+    if (Item instanceof Error) {
+      return res.status(400).json({ error: Item.message });
+    } else {
+      return res.json({ Item });
+    }
+  } catch (error) {
+    return res.json({ error });
+  }
 };
 export const editAction = (req: Request, res: Response) => {
   res.json({ pong: true });
