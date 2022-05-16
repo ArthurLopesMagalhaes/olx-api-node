@@ -1,6 +1,6 @@
 import { checkSchema } from "express-validator";
 
-export const addAds = checkSchema({
+export const addAd = checkSchema({
   token: {
     notEmpty: true,
     errorMessage: "Token não enviado",
@@ -33,49 +33,18 @@ export const addAds = checkSchema({
   },
 });
 
-export const listAds = checkSchema({
-  sort: {
-    optional: true,
-    trim: true,
-  },
-  offset: {
-    optional: true,
-  },
-  limit: {
-    optional: true,
-  },
-  search: {
-    optional: true,
-    trim: true,
-  },
-  category: {
-    optional: true,
-    trim: true,
-  },
-  state: {
-    optional: true,
-    trim: true,
-  },
-});
-
-export const adItem = checkSchema({
+export const editAd = checkSchema({
   id: {
     notEmpty: true,
-    errorMessage: "ID da promoção não enviado",
-  },
-  other: {
-    optional: true,
-  },
-});
-
-export const adChange = checkSchema({
-  id: {
-    notEmpty: true,
-    errorMessage: "ID da promoção não enviado",
+    errorMessage: "ID não enviado",
   },
   token: {
     notEmpty: true,
     errorMessage: "Token não enviado",
+  },
+  status: {
+    default: true,
+    optional: true,
   },
   title: {
     optional: true,
@@ -94,8 +63,5 @@ export const adChange = checkSchema({
   category: {
     optional: true,
     trim: true,
-  },
-  status: {
-    optional: true,
   },
 });

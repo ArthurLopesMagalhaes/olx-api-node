@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
 import Category, { CategoryType } from "../models/Category";
-import User from "../models/User";
+
 import { validationResult } from "express-validator";
 import * as adsService from "../services/adsService";
 import { v4 } from "uuid";
 import multer from "multer";
 import sharp from "sharp";
-import { unlink } from "fs/promises";
 
 // const storageConfig = multer.diskStorage({
 //   destination: (req, file, callback) => {
@@ -51,8 +50,6 @@ export const addAction = async (req: Request, res: Response) => {
     const priceNegotiable: boolean = req.body.pricenegotiable;
     const description: string = req.body.description;
     const category: string = req.body.category;
-
-    console.log(req.files);
 
     const arrImages: string[] = [];
 
@@ -130,6 +127,50 @@ export const getItem = async (req: Request, res: Response) => {
     return res.json({ error });
   }
 };
-export const editAction = (req: Request, res: Response) => {
-  res.json({ pong: true });
+
+export const editAction = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (errors.isEmpty()) {
+    const id: string = req.params.id;
+    const token: string = req.body.token;
+    const title: string = req.body.title;
+    const status: boolean = req.body.status;
+    const price: number = req.body.price;
+    const priceNegotiable: boolean = req.body.priceegotiable;
+    const description: string = req.body.description;
+    const category: string = req.body.category;
+
+    const arrImages: string[] = [];
+
+    if (req.files) {
+      (req.files as any[]).forEach(async (item) => {
+        const randUuid = v4();
+        const imageUrl = `http://localhost:5000/media/${randUuid}.jpg`;
+        arrImages.push(imageUrl);
+        await sharp(item.buffer)
+          .resize(500)
+          .toFormat("jpg")
+          .toFile(`./public/media/${randUuid}.jpg`);
+      });
+    }
+
+    const editAdd = await adsService.editItem(
+      token,
+      id,
+      title,
+      description,
+      price,
+      priceNegotiable,
+      category,
+      status,
+      arrImages
+    );
+    if (editAdd instanceof Error) {
+      return res.json({ error: editAdd.message });
+    } else {
+      return res.json({ adChanged: editAdd });
+    }
+  } else {
+    return res.json({ status: errors.mapped() });
+  }
 };

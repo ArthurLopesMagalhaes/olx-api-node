@@ -66,13 +66,12 @@ export const FindUsersDetails = async (token: string) => {
 
     const userAds = await Ad.find({ idUser: user._id });
 
-    let adList: AdType[] = [];
+    let adList: any[] = [];
 
-    for (let i in userAds) {
-      const cat = await Category.findById(userAds[i].category);
-
-      adList.push({ ...userAds[i], category: cat?.slug });
-    }
+    userAds.forEach(async (item) => {
+      const cat = await Category.findById(item.category);
+      adList.push({ item, category: cat?.slug });
+    });
 
     const userDetails = {
       name: user.name,

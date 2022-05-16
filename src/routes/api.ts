@@ -5,6 +5,7 @@ import multer from "multer";
 import { privateRoute } from "../config/passport";
 import * as AuthValidator from "../validators/AuthValidator";
 import * as UserValidator from "../validators/UserValidator";
+import * as AdsValidator from "../validators/AdsValidator";
 
 import * as AuthController from "../controllers/authController";
 import * as AdsController from "../controllers/adsController";
@@ -33,10 +34,18 @@ router.post(
   "/ad/add",
   privateRoute,
   AdsController.upload.array("images", 10),
+  AdsValidator.addAd,
   AdsController.addAction
 );
 router.get("/ad/list", AdsController.getList);
 router.get("/ad/item", AdsController.getItem);
-router.post("/ad/:id", privateRoute, AdsController.editAction);
+
+router.post(
+  "/ad/:id",
+  privateRoute,
+  AdsController.upload.array("images", 10),
+  AdsValidator.editAd,
+  AdsController.editAction
+);
 
 export default router;

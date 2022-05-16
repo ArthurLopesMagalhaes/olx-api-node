@@ -52,7 +52,7 @@ export const listAds = async (
     images: string[];
   };
 
-  let ads: AdsType[] = [];
+  let ads: any[] = [];
 
   const filters: any = { status: true };
 
@@ -64,7 +64,6 @@ export const listAds = async (
     const categoryDB = await Category.findOne({ slug: category });
     try {
       filters.category = categoryDB?._id.toString();
-      console.log(filters.category);
     } catch (error) {
       console.error("Something went wrong");
     }
@@ -89,7 +88,7 @@ export const listAds = async (
   if (adsData) {
     adsData.forEach((item) => {
       ads.push({
-        id: item.price,
+        id: item._id,
         title: item.title,
         price: item.price,
         priceNegotiable: item.priceNegotiable,
@@ -154,8 +153,6 @@ export const getItem = async (id: string, other: boolean) => {
           otherProducts,
         };
 
-        console.log(ad);
-
         return ad;
       } else {
         return new Error("Produto inexistente");
@@ -163,6 +160,66 @@ export const getItem = async (id: string, other: boolean) => {
     } catch (error) {
       return new Error("ID inválido");
     }
+  } else {
+    return new Error("ID inválido");
+  }
+};
+
+export const editItem = async (
+  token: string,
+  id: string,
+  title: string,
+  description: string,
+  price: number,
+  priceNegotiable: boolean,
+  category: string,
+  status: boolean,
+  arrImages: string[]
+) => {
+  if (isValidObjectId(id)) {
+    const ad = await Ad.findById(id);
+
+    if (!ad) {
+      return new Error("Anúncio não encontrado");
+    }
+
+    const user = await User.findOne({ token });
+    if (user?._id.toString() !== ad.idUser) {
+      return new Error("Este anuncio não é deste usuário");
+    }
+
+    let updates: any = {};
+
+    if (title) {
+      updates.title = title;
+    }
+
+    if (price) {
+      updates.price = price;
+    }
+    if (priceNegotiable) {
+      updates.price = priceNegotiable;
+    }
+    if (status) {
+      updates.status = status;
+    }
+    if (description) {
+      updates.description = description;
+    }
+    if (category) {
+      const categoryDB = await Category.findOne({ slug: category });
+      if (!categoryDB) {
+        return new Error("Essa categoria não existe");
+      }
+      updates.category = categoryDB._id.toString();
+    }
+    if (arrImages.length > 0) {
+      updates.images = arrImages;
+    }
+
+    await Ad.findByIdAndUpdate(id, { $set: updates });
+
+    return updates;
   } else {
     return new Error("ID inválido");
   }
